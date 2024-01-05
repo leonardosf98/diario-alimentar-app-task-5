@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/header/header.jsx";
 import { Link } from "react-router-dom";
+import Logo from "../../assets/nutri.dev_logo.png";
 
 import "./root.css";
 import MealList from "../../components/meal-list/meal-list.jsx";
@@ -17,16 +18,16 @@ function Root() {
   } else {
     mealsLS = localStorage.setItem("meals", "[]");
   }
-  const addMeal = (mealData) => {
-    setMeals((oldstate) => [...oldstate, mealData]);
-  };
   return loading ? (
     <p>Carregando</p>
   ) : (
-    <div>
-      <Header />
+    <div className="main">
+      <div>
+        <Header />
+        <img className="logo" src={Logo} />
+      </div>
       <MealList meals={meals} />
-      <Link to={"/createMeal"} onAddMeal={addMeal}>
+      <Link className="addMeal" to={"/createMeal"}>
         Adicionar refeição
       </Link>
     </div>

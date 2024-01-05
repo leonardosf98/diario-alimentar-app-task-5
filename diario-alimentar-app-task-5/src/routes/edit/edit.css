@@ -1,0 +1,32 @@
+.meal-item-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  row-gap: 10px;
+  background-color: white;
+}
+.meal-item {
+  display: flex;
+  flex-direction: row;
+  text-wrap: nowrap;
+  text-align: center;
+  justify-content: space-between;
+}
+.meal-item-li {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 10px;
+  border-radius: 5px;
+  padding: 5px;
+  border: 1px solid black;
+}
+.delete-btn {
+  background: none;
+  margin: 0;
+  padding: 0;
+}

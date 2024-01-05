@@ -1,0 +1,16 @@
+.meal-quantity-container {
+  display: flex;
+  flex-direction: column;
+}
+.meal-item {
+  width: 50%;
+}
+
+.button {
+  font-size: 20px;
+  padding: 10px;
+  border-radius: 7px;
+  text-align: center;
+  background-color: rgb(36, 65, 185);
+  color: white;
+}

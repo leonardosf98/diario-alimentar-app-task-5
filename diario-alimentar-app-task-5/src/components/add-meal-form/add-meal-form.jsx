@@ -12,7 +12,7 @@ function AddMealForm({ onMealSubmit }) {
   };
 
   const todayTime = new Date().toLocaleString("pt-br").slice(12, 17);
-  const [mealName, setMealName] = useState("Café da manhã");
+  const [mealName, setMealName] = useState();
   const [mealDate, setMealDate] = useState(
     `${todayDate.year}-${todayDate.month}-${todayDate.day}`
   );
@@ -24,8 +24,7 @@ function AddMealForm({ onMealSubmit }) {
     event.preventDefault();
     const newItem = {
       itemName: mealItemData[0],
-      measureUnit: mealItemData[1],
-      quantity: mealItemData[2],
+      quantity: mealItemData[1],
     };
     setMealItem((oldState) => [...oldState, newItem]);
   };
@@ -33,7 +32,7 @@ function AddMealForm({ onMealSubmit }) {
     setError(mealItem.length === 0);
   }, [mealItem]);
   return (
-    <div>
+    <div className="body">
       <Header />
       <Link to="/">Voltar</Link>
       <form
@@ -49,9 +48,12 @@ function AddMealForm({ onMealSubmit }) {
           }
         }}
       >
-        <fieldset>
-          <label htmlFor="meal-name">Selecione o nome da refeição: </label>
+        <div className="">
+          <label className="form-label" htmlFor="meal-name">
+            Selecione o nome da refeição:
+          </label>
           <select
+            className="form-select"
             type="text"
             name="meal-name"
             id="meal-name"
@@ -60,16 +62,22 @@ function AddMealForm({ onMealSubmit }) {
               setMealName(event.target.value);
             }}
           >
+            <option selected value="">
+              Escolha um nome para sua refeição
+            </option>
             <option value="Café da manhã">Café da manhã</option>
             <option value="Lanche">Lanche</option>
             <option value="Almoço">Almoço</option>
             <option value="Jantar">Jantar</option>
             <option value="Ceia">Ceia</option>
           </select>
-        </fieldset>
+        </div>
         <fieldset>
-          <label htmlFor="date">Selecione a data da refeição: </label>
+          <label className="form-label" htmlFor="date">
+            Selecione a data da refeição:{" "}
+          </label>
           <input
+            className="form-control"
             type="date"
             name="date"
             id="date"
@@ -80,8 +88,11 @@ function AddMealForm({ onMealSubmit }) {
           />
         </fieldset>
         <fieldset>
-          <label htmlFor="date">Selecione o horário da refeição: </label>
+          <label className="form-label" htmlFor="date">
+            Selecione o horário da refeição:{" "}
+          </label>
           <input
+            className="form-control"
             type="time"
             name="time"
             id="time"
@@ -94,12 +105,12 @@ function AddMealForm({ onMealSubmit }) {
         <div className="meal-item-container">
           {mealItem.map((item) => {
             return (
-              <div className="meal-item">{`${item.itemName}: ${item.quantity} ${item.measureUnit}`}</div>
+              <div className="meal-item">{`${item.itemName}: ${item.quantity}`}</div>
             );
           })}
         </div>
         {error && (
-          <p className="error-msg">
+          <p className="invalid-feedback">
             Você deve registrar pelo menos um alimento
           </p>
         )}

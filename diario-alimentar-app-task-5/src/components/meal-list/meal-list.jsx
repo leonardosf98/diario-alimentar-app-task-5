@@ -8,13 +8,16 @@ function MealList({ meals }) {
     return (
       <div>
         <h2>Refeições</h2>
-        <ul className="meals-list">
+        <ul className="meals-list list-group">
           {meals.map((item, index) => {
+            const formatedDate = item.mealDate.split("-").reverse().join("/");
             return (
-              <li key={`${index}`} className="meal-shown-li">
-                <h3>{item.mealName}</h3>
-                <p>Horário: {item.mealTime}</p>
-                <p>Data: {item.mealDate}</p>
+              <li key={`${index}`} className=" list-group-item">
+                <h5 className="mb-1">{item.mealName}</h5>
+                <div className="d-flex w-100 justify-content-between">
+                  <small>{item.mealTime}</small>
+                  <small>{formatedDate}</small>
+                </div>
                 <Link to={`/edit/${item.id}`}>Editar</Link>
               </li>
             );

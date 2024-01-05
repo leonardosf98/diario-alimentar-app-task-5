@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import "./edit.css";
 
 function Edit() {
   const navigate = useNavigate();
   const id = useParams();
-  const fullObject = JSON.parse(localStorage.getItem("meals"));
+  let fullObject = JSON.parse(localStorage.getItem("meals"));
   const idFinder = (item) => {
     return item.id === id.id;
   };
-  let index = fullObject.findIndex(idFinder) * 1;
+  const index = fullObject.findIndex(idFinder) * 1;
   const [mealName, setMealName] = useState(fullObject[index].mealName);
   const [mealDate, setMealDate] = useState(fullObject[index].mealDate);
   const [mealTime, setMealTime] = useState(fullObject[index].mealTime);
   const [mealItem, setMealItem] = useState(fullObject[index].mealItem);
   const [error, setError] = useState(false);
   const foodTypes = ["Leguminosas", "Frutas", "Cereais", "Hortaliças"];
-  const [measureUnit, setMeasureUnit] = useState("gramas");
   const [itemType, setItemType] = useState("");
   const [itemName, setItemName] = useState("Feijão");
   const [itemOptions, setItemOptions] = useState([
@@ -44,20 +44,15 @@ function Edit() {
     if (fullObject.length === 1) {
       fullObject.splice(0, 1);
     } else {
-      fullObject.splice(index, index);
+      fullObject.splice(index, 1);
     }
-    console.log(fullObject);
     localStorage.setItem("meals", JSON.stringify(fullObject));
     navigate("/");
   };
-
-  const handleOptionChange = () => {
-    if (measureUnit === "gramas") {
-      setMeasureUnit("ml's");
-    } else {
-      setMeasureUnit("gramas");
-    }
+  const deleteItem = (key) => {
+    setMealItem(mealItem.splice(key + 1, 1));
   };
+
   const handleTypeChange = (event) => {
     const type = event.target.value * 1;
     setItemType(type);
@@ -83,7 +78,6 @@ function Edit() {
   const onSubmit = () => {
     return {
       itemName: itemName,
-      measureUnit: measureUnit,
       quantity: mealQuantity * 1,
     };
   };
@@ -140,13 +134,27 @@ function Edit() {
             }}
           />
         </fieldset>
-        <div className="meal-item-container">
-          {mealItem.map((item) => {
+
+        <h3>Lista de alimentos</h3>
+        <ul className="meal-item-container">
+          {mealItem.map((item, index) => {
             return (
-              <div className="meal-item">{`${item.itemName}: ${item.quantity} ${item.measureUnit}`}</div>
+              <li className="meal-item-li">
+                <div className="meal-item">{`${item.itemName}: ${item.quantity} `}</div>
+                <button
+                  key={index}
+                  className="delete-btn btn-close"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    deleteItem(index);
+                  }}
+                >
+                  X
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
         {error && (
           <p className="error-msg">
             Você deve registrar pelo menos um alimento
@@ -194,31 +202,7 @@ function Edit() {
               </select>
             </fieldset>
             <fieldset className="meal-quantity-container">
-              <label htmlFor="gramas"> Sólido</label>
-              <input
-                type="radio"
-                name="gramas"
-                id="gramas"
-                value="gramas"
-                checked={measureUnit === "gramas"}
-                onChange={(event) => {
-                  setMeasureUnit(event.target.value);
-                  handleOptionChange();
-                }}
-              />
-              <label htmlFor="liquid">Líquido</label>
-              <input
-                type="radio"
-                name="ml's"
-                id="ml's"
-                value="ml's"
-                checked={measureUnit === "ml's"}
-                onChange={(event) => {
-                  setMeasureUnit(event.target.value);
-                  handleOptionChange();
-                }}
-              />
-              <label>Digite a quantidade em {measureUnit}: </label>
+              <label>Digite a quantidade de {itemName}: </label>
               <input
                 type="number"
                 name="quantity"

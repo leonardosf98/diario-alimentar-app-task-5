@@ -1,10 +1,6 @@
 import "./header.css";
 function Header() {
-  return (
-    <div>
-      <h1>Diário Alimentar</h1>
-    </div>
-  );
+  return <h1 className="title">Diário Alimentar</h1>;
 }
 
 export default Header;

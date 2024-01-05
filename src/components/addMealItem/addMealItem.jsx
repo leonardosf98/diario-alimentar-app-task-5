@@ -1,34 +1,11 @@
-import { useState, useEffect } from "react";
-import "./addMealItem.css";
-function AddMealItem({ onItemSubmit }) {
-  const apiUrl =
-    "http://localhost:4000/graphql?query=query+MyQuery+%7B%0A++getAllCategories+%7B%0A++++name%0A++%7D%0A%7D#";
+import { useState } from "react";
 
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-  useEffect(() => {
-    fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.data && data.data.getAllCategories) {
-          const categories = data.data.getAllCategories;
-          const categoryNames = categories.map((category) => category.name);
-          setFoodTypes(categoryNames);
-        } else {
-          console.error("Resposta GraphQL mal formatada ou sem dados.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erro durante a solicitação GraphQL:", error);
-      });
-  }, []);
-  const [itemType, setItemType] = useState(0);
+function AddMealItem({ onItemSubmit }) {
+  const foodTypes = ["Leguminosas", "Frutas", "Cereais", "Hortaliças"];
+
+  const [measureUnit, setMeasureUnit] = useState("gramas");
+  const [itemType, setItemType] = useState("");
   const [itemName, setItemName] = useState("Feijão");
-  const [foodTypes, setFoodTypes] = useState([]);
   const [itemOptions, setItemOptions] = useState([
     "Feijão",
     "Ervilha",
@@ -37,51 +14,44 @@ function AddMealItem({ onItemSubmit }) {
   ]);
   const [mealQuantity, setMealQuantity] = useState();
   const [error, setError] = useState(false);
-
-  useEffect(() => {
-    handleTypeChange();
-  }, [itemType]);
-
-  const handleTypeChange = (event) => {
-    if (!event) {
-      return;
-    }
-    setItemType(event.target.value);
-    const type = event.target.value;
-    const URL = `http://localhost:4000/graphql?query=query+MyQuery+%7B%0A++getCategoryById%28id%3A+${type}%29+%7B%0A++++name%0A++++foods+%7B%0A++++++name%0A++++%7D%0A++%7D%0A%7D`;
-
-    try {
-      fetch(URL, requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          if (result && result.data && result.data.getCategoryById) {
-            const category = result.data.getCategoryById;
-            const foodNames = category.foods.map((food) => food.name);
-            setItemOptions(foodNames);
-          } else {
-            console.error("Resposta GraphQL mal formatada ou sem dados.");
-          }
-        })
-        .catch((error) => {
-          console.error("Erro durante a solicitação GraphQL:", error);
-        });
-    } catch (error) {
-      console.error("Erro durante a construção da URL:", error);
+  const handleOptionChange = () => {
+    if (measureUnit === "gramas") {
+      setMeasureUnit("ml's");
+    } else {
+      setMeasureUnit("gramas");
     }
   };
-
+  const handleTypeChange = (event) => {
+    const type = event.target.value * 1;
+    setItemType(type);
+    switch (type) {
+      case 1:
+        setItemOptions(["Feijão", "Ervilha", "Lentilha", "Grão de bico"]);
+        setItemName("Feijão");
+        break;
+      case 3:
+        setItemOptions(["Arroz", "Aveia", "Milho", "Brócolis"]);
+        setItemName("Arroz");
+        break;
+      case 2:
+        setItemOptions(["Maçã", "Banana", "Mamão", "Uva"]);
+        setItemName("Maçã");
+        break;
+      case 4:
+        setItemOptions(["Alface", "Tomate", "Cenoura", "Brócolis"]);
+        setItemName("Alface");
+        break;
+    }
+  };
   const onSubmit = () => {
-    return [itemName, mealQuantity];
+    return [itemName, measureUnit, mealQuantity];
   };
   return (
     <div>
       <form>
         <fieldset>
-          <label className="form-label  " htmlFor="itemType">
-            Selecione o tipo de alimento:
-          </label>
+          <label htmlFor="itemType">Selecione o tipo de alimento: </label>
           <select
-            className="form-control"
             name="itemType"
             id="itemType"
             value={itemType}
@@ -99,11 +69,8 @@ function AddMealItem({ onItemSubmit }) {
           </select>
         </fieldset>
         <fieldset>
-          <label className="form-label" htmlFor="itemName">
-            Selecione o nome do alimento:{" "}
-          </label>
+          <label htmlFor="itemName">Selecione o nome do alimento: </label>
           <select
-            className="form-select"
             name="itemName"
             id="itemName"
             value={itemName}
@@ -122,11 +89,32 @@ function AddMealItem({ onItemSubmit }) {
           </select>
         </fieldset>
         <fieldset className="meal-quantity-container">
-          <label className="form-label">
-            Digite a quantidade de {itemName}:{" "}
-          </label>
+          <label htmlFor="gramas"> Sólido</label>
           <input
-            className="form-control"
+            type="radio"
+            name="gramas"
+            id="gramas"
+            value="gramas"
+            checked={measureUnit === "gramas"}
+            onChange={(event) => {
+              setMeasureUnit(event.target.value);
+              handleOptionChange();
+            }}
+          />
+          <label htmlFor="liquid">Líquido</label>
+          <input
+            type="radio"
+            name="ml's"
+            id="ml's"
+            value="ml's"
+            checked={measureUnit === "ml's"}
+            onChange={(event) => {
+              setMeasureUnit(event.target.value);
+              handleOptionChange();
+            }}
+          />
+          <label>Digite a quantidade em {measureUnit}: </label>
+          <input
             type="number"
             name="quantity"
             id="quantity"
@@ -138,12 +126,9 @@ function AddMealItem({ onItemSubmit }) {
               }
             }}
           />
-          {error && (
-            <div className="invalid-feedback">Digite um valor válido</div>
-          )}
+          {error && <div>Digite um valor válido</div>}
         </fieldset>
         <button
-          className="button"
           onClick={(event) => {
             event.preventDefault();
             if (!mealQuantity) {

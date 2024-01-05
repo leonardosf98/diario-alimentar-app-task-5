@@ -1,0 +1,12 @@
+.meals-list {
+  overflow-y: auto;
+  height: 200px;
+  list-style: none;
+  align-items: center;
+}
+.meal-shown-li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 10px;
+}
